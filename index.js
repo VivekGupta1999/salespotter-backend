@@ -1,29 +1,40 @@
 //import express to create the server
 const express = require('express');
 
-const connectDB = require('./config/db');
+const app = express();
 //import the connectDB function
+const connectDB = require('./config/db');
+
+//import the doteenv module
+const dotenv = require('dotenv');
 
 //load evnvironment variables from a .env file into process.env
-require('dotenv').config();
+dotenv.config();
 
-
-const app = express();
-
-//middleware to parse incoming JSON requests and put the parsed data into req.body
-app.use(express.json());
+//load the middleware to test the protected route
+const authMiddleware = require('./middlewares/authMiddleware');
 
 //connect to the database
 connectDB();
 
-//Routes
-const adRoutes = require('./routes/adRoutes');
-const userRoutes = require('./routes/userRoutes');
-const { Connection } = require('mongoose');
+//pase JSON Bodies
+app.use(express.json()); //parse Json Bodies
 
-app.use('/api/ads',adRoutes);
-app.use('/api/users',userRoutes);
-//route setup 
+
+//Routes
+// const adRoutes = require('./routes/adRoutes');
+const userRoutes = require('./routes/userRoutes');
+
+//use the user routes
+app.use('/api/user',userRoutes);
+
+
+//Protected Route
+app.post ('/api/protected-route',authMiddleware.verifyToken,(req,res)=>{
+    res.status(200).json({message:'This is a protected Route', userId:req.user})
+});
+
+
 
 
 //setting the PORT
