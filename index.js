@@ -22,11 +22,13 @@ app.use(express.json()); //parse Json Bodies
 
 
 //Routes
-// const adRoutes = require('./routes/adRoutes');
+// user Routes
 const userRoutes = require('./routes/userRoutes');
-
+//Ad Routes
+const adRoutes = require('./routes/adRoutes');
 //use the user routes
 app.use('/api/user',userRoutes);
+app.use('/api/ad',adRoutes);
 
 
 //Protected Route
