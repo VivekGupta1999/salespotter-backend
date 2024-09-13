@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+
+
 const userSchema = new mongoose.Schema({
     firstName:{
         type: String,
@@ -39,6 +41,19 @@ const userSchema = new mongoose.Schema({
     resetPassswordExpires:{
         type:Date,
     }
+    ,notificationTags:[{type:mongoose.Schema.Types.ObjectId,ref: 'Tag'}], //refers to the tag model,
+    notificationCoordinates: {
+        type: {
+          type: String,
+          enum: ['Point'], // GeoJSON type, should always be 'Point'
+          required: true,
+        },
+        coordinates: {
+          type: [Number], // Array of numbers [longitude, latitude]
+          required: true,
+        },
+      },
+    
     
     
 });
@@ -60,6 +75,7 @@ userSchema.pre('save',async function(next){
     }
     
 });
+userSchema.index({ notificationCoordinates: '2dsphere' });
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;

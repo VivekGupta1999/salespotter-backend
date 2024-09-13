@@ -15,12 +15,13 @@ const adSchema =  new mongoose.Schema({
     },
     coordinates: {
         type: {
-          type: String, // 'Point'
-          enum: ['Point'], // Must be 'Point' for GeoJSON
-   
+          type: String,
+          enum: ['Point'], // GeoJSON type, should always be 'Point'
+          required: true,
         },
         coordinates: {
-          type: [Number], // Array of numbers: [longitude, latitude]
+          type: [Number], // Array of numbers [longitude, latitude]
+          required: true,
         },
       },
     date:{
@@ -44,6 +45,7 @@ const adSchema =  new mongoose.Schema({
         type:Date,
         default:Date.now
     },
+    tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }],  // Array of tag references
 
 });
 
@@ -55,14 +57,5 @@ adSchema.index({coordinates: '2dsphere'}); //Ensures 2dsphere index for geospati
 
 
 
-adSchema.pre('save', function (next) {
-  
-    if (this.coordinates && Array.isArray(this.coordinates)) {
-      this.coordinates = {
-        type: 'Point',
-        coordinates: this.coordinates, // Array of [longitude, latitude]
-      };
-    }
-    next();
-  });
+
 module.exports = mongoose.model('Ad',adSchema);

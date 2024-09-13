@@ -5,12 +5,13 @@ const crypto =require('crypto');
 const nodemailer = require('nodemailer');
 const { text } = require('express');
 const { constrainedMemory } = require('process');
+const Tag = require('../models/tag');
 
 //Register new user 
 exports.registerUser = async (req,res) =>{
     try{
         
-        const{firstName,lastName,email,password,location,profile_picture,notificationDistance} = req.body
+        const{firstName,lastName,email,password,location,profile_picture,notificationDistance,lng,lat} = req.body
 
         //check if user already exists
         const exsistingUser = await User.findOne({email});
@@ -20,6 +21,7 @@ exports.registerUser = async (req,res) =>{
 
         }
 
+      
         //Create a new User
 
         const newUser = new User({
@@ -29,7 +31,8 @@ exports.registerUser = async (req,res) =>{
             password,
             location,
             profile_picture,
-            notificationDistance
+            notificationDistance,
+
             
         });
 
@@ -97,7 +100,8 @@ exports.updateUserProfile = async(req,res) => {
          user.location = location || user.location;
          user.profile_picture = profile_picture || user.profile_picture;
          user.notificationDistance = notificationDistance || user.notificationDistance;
-
+       
+        
          await user.save();
          res.status(500).json({message:"User Profile Updated Successfully",user});
     } catch (error) {
@@ -278,6 +282,52 @@ exports.getUserProfile = async(req,res) => {
 
     }catch(error){
         res.status(500).json({message:"Internal Server Error"})
+    }
+};
+
+
+exports.updateNotificatonPreferences = async(req,res) =>{
+    try{
+
+        const userId = req.user;
+        const {notificationDistance, notificationTags = [], lat,lng} = req.body;
+
+        const user = await User.findById(userId);
+
+        if(!user){
+            return res.staus(404).json({message:"user not found"});
+        }
+
+
+        if(notificationTags.length > 0 ){
+            const validTags = await Tag.find({_id:{$in:notificationTags}});
+       
+            if(validTags.length !== notificationTags.length){
+                return res.status(400).json({error:"Invalid Tags provided"});
+            }
+
+            user.notificationTags = notificationTags;
+        }
+
+        if(lat || lng){
+            user.notificationCoordinates = {
+                type: 'Point',
+                coordinates:[
+                    lng,lat
+                    
+                ]
+            };
+        }
+
+        
+
+        await user.save();
+
+        res.status(200).json(user);
+
+    }catch(error){
+        res.status(500).json({message:"Internal Server Error"});
+        console.log(error);
     }
 };
 

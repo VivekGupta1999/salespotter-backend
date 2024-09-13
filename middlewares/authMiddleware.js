@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+
 //middle ware to protect routes
 
 //verify the token
@@ -27,3 +28,13 @@ exports.verifyToken = (req,res,next)=>{
     }
 };
 
+
+exports.checkAdmin = (req,res,next) =>{
+
+    const adminId = process.env.ADMIN_ID;
+    if(adminId !== req.user){
+        return res.status(403).json({message:"Access Denied, Only admin can perform this operation"});
+    }
+
+    next();
+}

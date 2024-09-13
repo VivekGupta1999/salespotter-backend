@@ -15,5 +15,5 @@ router.get('/profile',authMiddleware.verifyToken,userController.getUserProfile);
 router.put('/profile',authMiddleware.verifyToken,userController.updateUserProfile);
 router.post('/delete-user',authMiddleware.verifyToken,userController.deleteUser);
 router.put('/change-password',authMiddleware.verifyToken,userController.changePassword);
-
+router.put('/updateNotificationPreferences',authMiddleware.verifyToken,userController.updateNotificatonPreferences);
 module.exports = router;
