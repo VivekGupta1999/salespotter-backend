@@ -46,11 +46,11 @@ const userSchema = new mongoose.Schema({
         type: {
           type: String,
           enum: ['Point'], // GeoJSON type, should always be 'Point'
-          required: true,
+       
         },
         coordinates: {
           type: [Number], // Array of numbers [longitude, latitude]
-          required: true,
+          
         },
       },
     
@@ -79,3 +79,6 @@ userSchema.index({ notificationCoordinates: '2dsphere' });
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
+
+
+

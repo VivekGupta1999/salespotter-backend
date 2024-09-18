@@ -1,7 +1,12 @@
-// we will create the function to connect to db here 
 
+
+
+// we will create the function to connect to db here 
+const dotenv = require('dotenv');
+
+dotenv.config();
 const mongoose = require('mongoose');
- 
+
 const connectDB = async() =>{
     try{
         await mongoose.connect(process.env.DATABASE_URL,{
@@ -18,3 +23,4 @@ const connectDB = async() =>{
 
 
 module.exports = connectDB;
+

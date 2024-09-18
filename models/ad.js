@@ -59,3 +59,5 @@ adSchema.index({coordinates: '2dsphere'}); //Ensures 2dsphere index for geospati
 
 
 module.exports = mongoose.model('Ad',adSchema);
+
+

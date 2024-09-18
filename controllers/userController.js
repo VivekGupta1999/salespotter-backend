@@ -11,13 +11,13 @@ const Tag = require('../models/tag');
 exports.registerUser = async (req,res) =>{
     try{
         
-        const{firstName,lastName,email,password,location,profile_picture,notificationDistance,lng,lat} = req.body
+        const{firstName,lastName,email,password,location,profile_picture,notificationDistance} = req.body
 
         //check if user already exists
         const exsistingUser = await User.findOne({email});
        
         if(exsistingUser){
-            return res.status(400).json({message: 'User already exists'});
+            return res.status(409).json({message: 'User already exists'});
 
         }
 
@@ -44,7 +44,7 @@ exports.registerUser = async (req,res) =>{
 
     }
     catch(error){
-        res.status(500).json({message:'Server error', error});
+        res.status(500).json({message:'Internal Server Error', error});
     }
 };
 
@@ -103,7 +103,7 @@ exports.updateUserProfile = async(req,res) => {
        
         
          await user.save();
-         res.status(500).json({message:"User Profile Updated Successfully",user});
+         res.status(200).json({message:"User Profile Updated Successfully",user});
     } catch (error) {
         res.status(500).json({message:"Internal Server Error"});
     }
